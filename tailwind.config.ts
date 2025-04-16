@@ -61,6 +61,19 @@ export default {
 					'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
+				},
+				calculator: {
+					display: '#1F2937',
+					button: {
+						number: '#E5E7EB',
+						numberHover: '#D1D5DB',
+						operator: '#3B82F6',
+						operatorHover: '#2563EB',
+						function: '#4B5563',
+						functionHover: '#374151',
+						equals: '#F97316',
+						equalsHover: '#EA580C'
+					}
 				}
 			},
 			borderRadius: {

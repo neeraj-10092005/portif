@@ -99,3 +99,13 @@
     @apply bg-background text-foreground;
   }
 }
+
+@layer components {
+  .calculator-button-press {
+    @apply transform active:scale-95 transition-all duration-100;
+  }
+  
+  .calculator-display {
+    @apply transition-all duration-200;
+  }
+}
