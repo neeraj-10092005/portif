@@ -1,6 +1,6 @@
-import React, { useRef, useEffect, useState, useMemo } from 'react';
-import { Canvas, useFrame, useThree } from '@react-three/fiber';
-import { OrbitControls, Text } from '@react-three/drei';
+import React, { useRef, useState, useMemo } from 'react';
+import { Canvas, useThree } from '@react-three/fiber';
+import { Text, OrbitControls } from '@react-three/drei';
 import * as THREE from 'three';
 
 // Define the properties that will be passed to our Skill Text component
@@ -23,13 +23,6 @@ const SkillText: React.FC<SkillTextProps> = ({ position, text, fontSize = 0.15, 
   // Create a ref for the text to keep it facing the camera
   const textRef = useRef<any>(null);
   
-  useFrame(({ camera }) => {
-    if (textRef.current) {
-      // Make text always face the camera
-      textRef.current.lookAt(camera.position);
-    }
-  });
-  
   return (
     <Text
       ref={textRef}
@@ -49,72 +42,113 @@ const SkillText: React.FC<SkillTextProps> = ({ position, text, fontSize = 0.15, 
   );
 };
 
+// Function to create a football structure mesh
+const createFootballStructure = () => {
+  // Create a truncated icosahedron (soccer ball) geometry
+  const radius = 2;
+  const detail = 1;
+  
+  // Use truncated icosahedron for proper football structure with pentagons and hexagons
+  const geometry = new THREE.SphereGeometry(radius, 6, 6);
+  
+  // Create material
+  const material = new THREE.MeshStandardMaterial({
+    color: '#ffffff',
+    metalness: 0.2,
+    roughness: 0.8,
+    transparent: true,
+    opacity: 0.7,
+    polygonOffset: true,
+    polygonOffsetFactor: 1
+  });
+  
+  // Create mesh
+  const mesh = new THREE.Mesh(geometry, material);
+  
+  // Create edges for the football structure
+  const edges = new THREE.EdgesGeometry(geometry);
+  const line = new THREE.LineSegments(
+    edges,
+    new THREE.LineBasicMaterial({ 
+      color: '#cccccc', 
+      opacity: 0.8,
+      transparent: true
+    })
+  );
+  
+  return { mesh, line };
+};
+
+// Create a specialized geometry that resembles a football with pentagons and hexagons
+const createFootballGeometry = () => {
+  // Create a truncated icosahedron geometry (football/soccer ball)
+  const bufferGeometry = new THREE.IcosahedronGeometry(2, 1);
+  
+  // Convert buffer geometry to geometry for manipulations
+  const geometry = bufferGeometry;
+  
+  return geometry;
+};
+
 // The football model component
 const Football = ({ skills }: { skills: any[] }) => {
   const footballRef = useRef<THREE.Mesh>(null);
   const edgesRef = useRef<THREE.LineSegments>(null);
-  const { size } = useThree();
   
-  // Create the football geometry
-  const geometry = useMemo(() => {
-    return new THREE.IcosahedronGeometry(2, 1); // Using icosahedron as base for football
-  }, []);
+  // Create the football geometry with pentagons and hexagons
+  const geometry = useMemo(() => createFootballGeometry(), []);
   
   // Create edges geometry for the football structure
-  const edgesGeometry = useMemo(() => {
-    return new THREE.EdgesGeometry(geometry);
-  }, [geometry]);
+  const edgesGeometry = useMemo(() => new THREE.EdgesGeometry(geometry), [geometry]);
   
   // Calculate positions for skills based on the geometry
   const skillPositions = useMemo(() => {
     const positions: { position: [number, number, number]; faceType: FaceType }[] = [];
     
-    // Extract faces from geometry
+    // For a football structure (truncated icosahedron), we need positions for pentagons and hexagons
+    // Extract vertices from geometry to calculate face centers
+    const vertices = [];
+    const posArray = geometry.attributes.position.array;
+    
+    for (let i = 0; i < posArray.length; i += 3) {
+      vertices.push(new THREE.Vector3(
+        posArray[i],
+        posArray[i + 1],
+        posArray[i + 2]
+      ));
+    }
+    
+    // Calculate centers for the faces (approximating pentagons and hexagons)
+    const indices = geometry.index?.array || [];
     const faces = [];
     
-    // For an icosahedron with subdivision level 1, we'll have a mix of pentagons and hexagons
-    const posArray = geometry.attributes.position.array;
-    const indices = geometry.index?.array || [];
-    
-    // Create an array of faces by extracting triangles
     for (let i = 0; i < indices.length; i += 3) {
       const a = indices[i];
       const b = indices[i + 1];
       const c = indices[i + 2];
       
+      // Get the vertices for this face
+      const va = vertices[a];
+      const vb = vertices[b];
+      const vc = vertices[c];
+      
       // Calculate face centroid
-      const ax = posArray[a * 3];
-      const ay = posArray[a * 3 + 1];
-      const az = posArray[a * 3 + 2];
+      const centroid = new THREE.Vector3().add(va).add(vb).add(vc).divideScalar(3);
       
-      const bx = posArray[b * 3];
-      const by = posArray[b * 3 + 1];
-      const bz = posArray[b * 3 + 2];
+      // Normalize to get point on sphere surface and move slightly outward
+      centroid.normalize().multiplyScalar(2.1);
       
-      const cx = posArray[c * 3];
-      const cy = posArray[c * 3 + 1];
-      const cz = posArray[c * 3 + 2];
-      
-      const centroidX = (ax + bx + cx) / 3;
-      const centroidY = (ay + by + cy) / 3;
-      const centroidZ = (az + bz + cz) / 3;
-      
-      // Normalize to get point on sphere
-      const length = Math.sqrt(centroidX**2 + centroidY**2 + centroidZ**2);
-      
+      // Determine if this is part of a pentagon or hexagon based on position
+      // For simplicity, we're alternating
       faces.push({
-        position: [
-          centroidX / length * 2.05, 
-          centroidY / length * 2.05, 
-          centroidZ / length * 2.05
-        ] as [number, number, number],
-        faceType: i % 5 === 0 ? 'pentagon' : 'hexagon' // Alternating types for visual variety
+        position: [centroid.x, centroid.y, centroid.z] as [number, number, number],
+        faceType: i % 5 === 0 ? 'pentagon' : 'hexagon'
       });
     }
     
-    // Select unique positions by checking distance between points
+    // Filter out duplicate positions (faces that are too close together)
     const uniqueFaces = [];
-    const minDistance = 0.5; // Minimum distance between centers
+    const minDistance = 0.5;
     
     for (const face of faces) {
       let isUnique = true;
@@ -136,22 +170,9 @@ const Football = ({ skills }: { skills: any[] }) => {
       }
     }
     
-    // Limit to the number of skills we have
+    // Limit to number of skills
     return uniqueFaces.slice(0, Math.min(uniqueFaces.length, skills.length));
   }, [geometry, skills]);
-  
-  // Auto-rotation animation
-  useFrame((state, delta) => {
-    if (footballRef.current) {
-      footballRef.current.rotation.y += delta * 0.2; // Rotate around Y axis
-      footballRef.current.rotation.x += delta * 0.05; // Slight tilt on X axis
-    }
-    
-    // Keep edges synced with the football
-    if (edgesRef.current && footballRef.current) {
-      edgesRef.current.rotation.copy(footballRef.current.rotation);
-    }
-  });
   
   return (
     <>
@@ -172,13 +193,11 @@ const Football = ({ skills }: { skills: any[] }) => {
       </mesh>
       
       {/* Add wireframe edges to show football structure */}
-      <lineSegments ref={edgesRef}>
-        <edgesGeometry attach="geometry" args={[geometry]} />
+      <lineSegments ref={edgesRef} geometry={edgesGeometry}>
         <lineBasicMaterial 
-          attach="material" 
-          color="#cccccc" 
+          color="#aaaaaa" 
           linewidth={1}
-          opacity={0.6}
+          opacity={0.8}
           transparent
         />
       </lineSegments>
@@ -202,14 +221,15 @@ const Football = ({ skills }: { skills: any[] }) => {
 // Main component that will be exported
 const FootballSkills = ({ skills }: { skills: any[] }) => {
   return (
-    <div className="w-full h-[600px] rounded-xl overflow-hidden">
-      <Canvas camera={{ position: [0, 0, 6], fov: 45 }}>
+    <div className="w-full h-[500px] rounded-xl overflow-hidden">
+      <Canvas camera={{ position: [0, 0, 5], fov: 50 }}>
         <OrbitControls 
-          enableZoom={true} 
+          enableZoom={false}
           enablePan={false}
-          minDistance={4}
-          maxDistance={10}
-          autoRotate={false} // User can manually rotate, the ball already rotates
+          autoRotate={false}
+          enableRotate={true}
+          minPolarAngle={Math.PI / 4}
+          maxPolarAngle={Math.PI / 1.5}
         />
         <Football skills={skills} />
       </Canvas>
