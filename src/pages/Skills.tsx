@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+
+import React, { useState, Suspense } from 'react';
 import { FaPython, FaReact, FaHtml5, FaCss3Alt, FaJs, FaGitAlt, FaDatabase, FaChartBar, FaTable, FaExchangeAlt, FaBrain, FaChartLine, FaUsers, FaLightbulb, FaMicrosoft } from 'react-icons/fa';
 import { SiR, SiTypescript, SiMysql, SiPandas, SiNumpy, SiScikitlearn, SiTensorflow, SiOpenai, SiNodedotjs, SiExpress, SiMongodb, SiVite } from 'react-icons/si';
 import { IoMdAnalytics } from 'react-icons/io';
@@ -7,10 +8,15 @@ import { GiArtificialIntelligence } from 'react-icons/gi';
 import { IoAnalytics } from 'react-icons/io5';
 import { BiBarChartAlt2 } from 'react-icons/bi';
 import { TbChartBar } from 'react-icons/tb';
+import { Loader } from '@react-three/drei';
 import '../styles/honeycomb.css';
+
+// Import our new FootballSkills component
+const FootballSkills = React.lazy(() => import('../components/FootballSkills'));
 
 const Skills = () => {
   const [activeCategory, setActiveCategory] = useState('all');
+  const [viewMode, setViewMode] = useState<'honeycomb' | '3d'>('honeycomb');
 
   const categories = {
     all: 'All Skills',
@@ -70,6 +76,30 @@ const Skills = () => {
         <div className="max-w-6xl mx-auto">
           <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-display font-bold mb-4 sm:mb-6 md:mb-8 text-center">Skills</h2>
           
+          {/* View Toggle Buttons */}
+          <div className="flex justify-center gap-3 mb-6">
+            <button
+              onClick={() => setViewMode('honeycomb')}
+              className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 ${
+                viewMode === 'honeycomb'
+                  ? 'bg-primary text-white shadow-lg shadow-primary/20'
+                  : 'bg-muted/30 text-white/60 hover:bg-muted/40'
+              }`}
+            >
+              Honeycomb View
+            </button>
+            <button
+              onClick={() => setViewMode('3d')}
+              className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 ${
+                viewMode === '3d'
+                  ? 'bg-primary text-white shadow-lg shadow-primary/20'
+                  : 'bg-muted/30 text-white/60 hover:bg-muted/40'
+              }`}
+            >
+              3D Football View
+            </button>
+          </div>
+          
           {/* Category Buttons */}
           <div className="flex flex-wrap justify-center gap-1.5 sm:gap-2 mb-6 sm:mb-8 md:mb-12">
             {Object.entries(categories).map(([key, label]) => (
@@ -87,40 +117,39 @@ const Skills = () => {
             ))}
           </div>
 
-          {/* Honeycomb Grid */}
-          <div className="honeycomb-container">
-            <div className="honeycomb-grid">
-              {skills.map((skill, index) => (
-                <div
-                  key={index}
-                  className={`honeycomb-cell group ${
-                    activeCategory === 'all' || skill.category === activeCategory
-                      ? 'opacity-100'
-                      : 'opacity-40'
-                  }`}
-                >
-                  <div className="honeycomb-content flex flex-col items-center justify-center">
-                    <span className={`text-base sm:text-lg md:text-xl lg:text-2xl transition-all duration-300 group-hover:scale-110 mb-1 sm:mb-2 ${
-                      activeCategory === 'all' || skill.category === activeCategory
-                        ? 'text-white'
-                        : 'text-white/40'
-                    }`}>
-                      {skill.icon}
-                    </span>
-                    <span className={`text-[8px] sm:text-[10px] md:text-xs lg:text-sm font-medium text-center transition-all duration-300 px-1 ${
-                      activeCategory === 'all' || skill.category === activeCategory
-                        ? 'text-white'
-                        : 'text-white/40'
-                    }`}>
-                      {skill.name}
-                    </span>
+          {viewMode === 'honeycomb' ? (
+            /* Honeycomb Grid */
+            <div className="honeycomb-container">
+              <div className="honeycomb-grid">
+                {filteredSkills.map((skill, index) => (
+                  <div
+                    key={index}
+                    className={`honeycomb-cell group opacity-100`}
+                  >
+                    <div className="honeycomb-content flex flex-col items-center justify-center">
+                      <span className="text-base sm:text-lg md:text-xl lg:text-2xl transition-all duration-300 group-hover:scale-110 mb-1 sm:mb-2 text-white">
+                        {skill.icon}
+                      </span>
+                      <span className="text-[8px] sm:text-[10px] md:text-xs lg:text-sm font-medium text-center transition-all duration-300 px-1 text-white">
+                        {skill.name}
+                      </span>
+                    </div>
                   </div>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
-          </div>
+          ) : (
+            /* 3D Football View */
+            <div className="w-full">
+              <Suspense fallback={<div className="flex justify-center items-center h-[600px]"><p>Loading 3D Football...</p></div>}>
+                <FootballSkills skills={filteredSkills} />
+              </Suspense>
+              <Loader />
+            </div>
+          )}
         </div>
       </section>
+      
       <footer className="py-3 sm:py-4 md:py-6 px-4 sm:px-6 border-t border-accent/10">
         <div className="max-w-4xl mx-auto text-center text-foreground/60 text-xs sm:text-sm md:text-base">
           <p>© 2025 All Rights Reserved</p>
