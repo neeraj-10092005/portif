@@ -12,7 +12,7 @@ import { Loader } from '@react-three/drei';
 import '../styles/honeycomb.css';
 import ErrorBoundary from '../components/ErrorBoundary';
 
-// Import our FootballSkills component with error boundary
+// Import our FootballSkills component
 const FootballSkills = React.lazy(() => import('../components/FootballSkills'));
 
 const Skills = () => {
@@ -73,14 +73,18 @@ const Skills = () => {
     : skills.filter(skill => skill.category === activeCategory);
 
   // Error fallback component
-  const ErrorFallback = () => {
+  const ErrorFallback = ({ error }: { error?: Error }) => {
+    console.error("3D View Error:", error);
+    
     React.useEffect(() => {
       setHasError(true);
+      setViewMode('honeycomb');
     }, []);
     
     return (
       <div className="flex flex-col justify-center items-center h-[500px] bg-muted/20 rounded-xl p-6 text-center">
         <p className="text-red-500 mb-4">Failed to load 3D visualization</p>
+        <p className="text-sm mb-4">Error: {error?.message || 'Unknown error'}</p>
         <button 
           className="px-4 py-2 bg-primary text-white rounded-full text-sm"
           onClick={() => setViewMode('honeycomb')}
@@ -89,6 +93,12 @@ const Skills = () => {
         </button>
       </div>
     );
+  };
+
+  // Reset error state when switching to 3D view
+  const handle3DViewSwitch = () => {
+    setHasError(false);
+    setViewMode('3d');
   };
 
   return (
@@ -110,10 +120,7 @@ const Skills = () => {
               Honeycomb View
             </button>
             <button
-              onClick={() => {
-                setViewMode('3d');
-                setHasError(false);
-              }}
+              onClick={handle3DViewSwitch}
               className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 ${
                 viewMode === '3d'
                   ? 'bg-primary text-white shadow-lg shadow-primary/20'

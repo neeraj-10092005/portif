@@ -70,23 +70,21 @@ const SimpleBall = ({ skills = [] }: SimpleBallProps) => {
       <ambientLight intensity={0.5} />
       <pointLight position={[10, 10, 10]} intensity={1} />
       
-      {/* Ball geometry - using a basic sphere */}
+      {/* Ball geometry */}
       <mesh>
         <sphereGeometry args={[radius, 16, 16]} />
-        <meshBasicMaterial color="#ffffff" wireframe />
+        <meshStandardMaterial color="#ffffff" wireframe={true} />
       </mesh>
       
       {/* Skill labels */}
-      {skills.slice(0, positions.length).map((skill, i) => (
-        positions[i] && (
-          <SkillText
-            key={i}
-            position={positions[i].position}
-            text={skill.name}
-            category={skill.category}
-            color={positions[i].isPentagon ? '#F97316' : '#ffffff'}
-          />
-        )
+      {positions.length > 0 && skills.slice(0, positions.length).map((skill, i) => (
+        <SkillText
+          key={i}
+          position={positions[i].position}
+          text={skill.name}
+          category={skill.category}
+          color={positions[i].isPentagon ? '#F97316' : '#ffffff'}
+        />
       ))}
     </>
   );
@@ -108,7 +106,7 @@ const FootballSkills = ({ skills = [] }: FootballSkillsProps) => {
           minPolarAngle={Math.PI / 4}
           maxPolarAngle={Math.PI / 1.5}
         />
-        <SimpleBall skills={skills || []} />
+        <SimpleBall skills={skills} />
       </Canvas>
     </div>
   );
