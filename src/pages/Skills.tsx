@@ -1,5 +1,4 @@
-
-import React, { useState, Suspense } from 'react';
+import React, { useState } from 'react';
 import { FaPython, FaReact, FaHtml5, FaCss3Alt, FaJs, FaGitAlt, FaDatabase, FaChartBar, FaTable, FaExchangeAlt, FaBrain, FaChartLine, FaUsers, FaLightbulb, FaMicrosoft } from 'react-icons/fa';
 import { SiR, SiTypescript, SiMysql, SiPandas, SiNumpy, SiScikitlearn, SiTensorflow, SiOpenai, SiNodedotjs, SiExpress, SiMongodb, SiVite } from 'react-icons/si';
 import { IoMdAnalytics } from 'react-icons/io';
@@ -8,17 +7,10 @@ import { GiArtificialIntelligence } from 'react-icons/gi';
 import { IoAnalytics } from 'react-icons/io5';
 import { BiBarChartAlt2 } from 'react-icons/bi';
 import { TbChartBar } from 'react-icons/tb';
-import { Loader } from '@react-three/drei';
 import '../styles/honeycomb.css';
-import ErrorBoundary from '../components/ErrorBoundary';
-
-// Import our FootballSkills component
-const FootballSkills = React.lazy(() => import('../components/FootballSkills'));
 
 const Skills = () => {
   const [activeCategory, setActiveCategory] = useState('all');
-  const [viewMode, setViewMode] = useState<'honeycomb' | '3d'>('honeycomb');
-  const [hasError, setHasError] = useState(false);
 
   const categories = {
     all: 'All Skills',
@@ -72,64 +64,11 @@ const Skills = () => {
     ? skills 
     : skills.filter(skill => skill.category === activeCategory);
 
-  // Error fallback component
-  const ErrorFallback = ({ error }: { error?: Error }) => {
-    console.error("3D View Error:", error);
-    
-    React.useEffect(() => {
-      setHasError(true);
-      setViewMode('honeycomb');
-    }, []);
-    
-    return (
-      <div className="flex flex-col justify-center items-center h-[500px] bg-muted/20 rounded-xl p-6 text-center">
-        <p className="text-red-500 mb-4">Failed to load 3D visualization</p>
-        <p className="text-sm mb-4">Error: {error?.message || 'Unknown error'}</p>
-        <button 
-          className="px-4 py-2 bg-primary text-white rounded-full text-sm"
-          onClick={() => setViewMode('honeycomb')}
-        >
-          Switch to Honeycomb View
-        </button>
-      </div>
-    );
-  };
-
-  // Reset error state when switching to 3D view
-  const handle3DViewSwitch = () => {
-    setHasError(false);
-    setViewMode('3d');
-  };
-
   return (
     <div>
       <section className="py-8 sm:py-12 md:py-16 lg:py-20 px-4 sm:px-6 bg-muted/10">
         <div className="max-w-6xl mx-auto">
           <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-display font-bold mb-4 sm:mb-6 md:mb-8 text-center">Skills</h2>
-          
-          {/* View Toggle Buttons */}
-          <div className="flex justify-center gap-3 mb-6">
-            <button
-              onClick={() => setViewMode('honeycomb')}
-              className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 ${
-                viewMode === 'honeycomb'
-                  ? 'bg-primary text-white shadow-lg shadow-primary/20'
-                  : 'bg-muted/30 text-white/60 hover:bg-muted/40'
-              }`}
-            >
-              Honeycomb View
-            </button>
-            <button
-              onClick={handle3DViewSwitch}
-              className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 ${
-                viewMode === '3d'
-                  ? 'bg-primary text-white shadow-lg shadow-primary/20'
-                  : 'bg-muted/30 text-white/60 hover:bg-muted/40'
-              }`}
-            >
-              3D Football View
-            </button>
-          </div>
           
           {/* Category Buttons */}
           <div className="flex flex-wrap justify-center gap-1.5 sm:gap-2 mb-6 sm:mb-8 md:mb-12">
@@ -148,38 +87,26 @@ const Skills = () => {
             ))}
           </div>
 
-          {viewMode === 'honeycomb' || hasError ? (
-            /* Honeycomb Grid */
-            <div className="honeycomb-container">
-              <div className="honeycomb-grid">
-                {filteredSkills.map((skill, index) => (
-                  <div
-                    key={index}
-                    className={`honeycomb-cell group opacity-100`}
-                  >
-                    <div className="honeycomb-content flex flex-col items-center justify-center">
-                      <span className="text-base sm:text-lg md:text-xl lg:text-2xl transition-all duration-300 group-hover:scale-110 mb-1 sm:mb-2 text-white">
-                        {skill.icon}
-                      </span>
-                      <span className="text-[8px] sm:text-[10px] md:text-xs lg:text-sm font-medium text-center transition-all duration-300 px-1 text-white">
-                        {skill.name}
-                      </span>
-                    </div>
+          {/* Honeycomb Grid */}
+          <div className="honeycomb-container">
+            <div className="honeycomb-grid">
+              {filteredSkills.map((skill, index) => (
+                <div
+                  key={index}
+                  className={`honeycomb-cell group opacity-100`}
+                >
+                  <div className="honeycomb-content flex flex-col items-center justify-center">
+                    <span className="text-base sm:text-lg md:text-xl lg:text-2xl transition-all duration-300 group-hover:scale-110 mb-1 sm:mb-2 text-white">
+                      {skill.icon}
+                    </span>
+                    <span className="text-[8px] sm:text-[10px] md:text-xs lg:text-sm font-medium text-center transition-all duration-300 px-1 text-white">
+                      {skill.name}
+                    </span>
                   </div>
-                ))}
-              </div>
+                </div>
+              ))}
             </div>
-          ) : (
-            /* 3D Football View */
-            <div className="w-full">
-              <Suspense fallback={<div className="flex justify-center items-center h-[500px]"><p>Loading 3D Football...</p></div>}>
-                <ErrorBoundary fallback={ErrorFallback}>
-                  <FootballSkills skills={filteredSkills} />
-                </ErrorBoundary>
-              </Suspense>
-              <Loader />
-            </div>
-          )}
+          </div>
         </div>
       </section>
       
