@@ -32,16 +32,23 @@ const SkillText = ({ position, text, fontSize = 0.15, color = 'white' }: SkillTe
   );
 };
 
-const SimpleBall = ({ skills }: { skills: any[] }) => {
+interface SimpleBallProps {
+  skills: Array<{name: string; category: string}>;
+}
+
+const SimpleBall = ({ skills = [] }: SimpleBallProps) => {
   const radius = 2;
   
   // Generate positions on a sphere for the skills
   const positions = React.useMemo(() => {
     const positions = [];
+    const totalSkills = Math.min(skills.length, 32);
     
-    for (let i = 0; i < Math.min(skills.length, 32); i++) {
-      const phi = Math.acos(-1 + (2 * i) / Math.min(skills.length, 32));
-      const theta = Math.sqrt(Math.min(skills.length, 32) * Math.PI) * phi;
+    if (totalSkills === 0) return [];
+    
+    for (let i = 0; i < totalSkills; i++) {
+      const phi = Math.acos(-1 + (2 * i) / totalSkills);
+      const theta = Math.sqrt(totalSkills * Math.PI) * phi;
       
       const x = radius * Math.cos(theta) * Math.sin(phi);
       const y = radius * Math.sin(theta) * Math.sin(phi);
@@ -71,19 +78,25 @@ const SimpleBall = ({ skills }: { skills: any[] }) => {
       
       {/* Skill labels */}
       {skills.slice(0, positions.length).map((skill, i) => (
-        <SkillText
-          key={i}
-          position={positions[i].position}
-          text={skill.name}
-          category={skill.category}
-          color={positions[i].isPentagon ? '#F97316' : '#ffffff'}
-        />
+        positions[i] && (
+          <SkillText
+            key={i}
+            position={positions[i].position}
+            text={skill.name}
+            category={skill.category}
+            color={positions[i].isPentagon ? '#F97316' : '#ffffff'}
+          />
+        )
       ))}
     </>
   );
 };
 
-const FootballSkills = ({ skills = [] }: { skills: any[] }) => {
+interface FootballSkillsProps {
+  skills?: Array<{name: string; category: string}>;
+}
+
+const FootballSkills = ({ skills = [] }: FootballSkillsProps) => {
   return (
     <div className="w-full h-[500px] rounded-xl overflow-hidden">
       <Canvas camera={{ position: [0, 0, 5], fov: 50 }}>

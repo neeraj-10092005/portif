@@ -10,6 +10,7 @@ import { BiBarChartAlt2 } from 'react-icons/bi';
 import { TbChartBar } from 'react-icons/tb';
 import { Loader } from '@react-three/drei';
 import '../styles/honeycomb.css';
+import ErrorBoundary from '../components/ErrorBoundary';
 
 // Import our FootballSkills component with error boundary
 const FootballSkills = React.lazy(() => import('../components/FootballSkills'));
@@ -71,7 +72,7 @@ const Skills = () => {
     ? skills 
     : skills.filter(skill => skill.category === activeCategory);
 
-  // Error boundary for 3D component
+  // Error fallback component
   const ErrorFallback = () => {
     React.useEffect(() => {
       setHasError(true);
@@ -164,11 +165,11 @@ const Skills = () => {
           ) : (
             /* 3D Football View */
             <div className="w-full">
-              <React.Suspense fallback={<div className="flex justify-center items-center h-[500px]"><p>Loading 3D Football...</p></div>}>
-                <React.ErrorBoundary FallbackComponent={ErrorFallback}>
+              <Suspense fallback={<div className="flex justify-center items-center h-[500px]"><p>Loading 3D Football...</p></div>}>
+                <ErrorBoundary fallback={ErrorFallback}>
                   <FootballSkills skills={filteredSkills} />
-                </React.ErrorBoundary>
-              </React.Suspense>
+                </ErrorBoundary>
+              </Suspense>
               <Loader />
             </div>
           )}
