@@ -1,5 +1,5 @@
 
-import React, { useRef, useState, useMemo } from 'react';
+import React, { useMemo } from 'react';
 import { Canvas } from '@react-three/fiber';
 import { Text, OrbitControls } from '@react-three/drei';
 import * as THREE from 'three';
@@ -12,10 +12,8 @@ interface SkillTextProps {
   color?: string;
 }
 
-type FaceType = 'pentagon' | 'hexagon';
-
-const SkillText: React.FC<SkillTextProps> = ({ position, text, fontSize = 0.15, color = 'white' }) => {
-  const [hover, setHover] = useState(false);
+const SkillText = ({ position, text, fontSize = 0.15, color = 'white' }: SkillTextProps) => {
+  const [hovered, setHovered] = React.useState(false);
   
   return (
     <Text
@@ -26,57 +24,54 @@ const SkillText: React.FC<SkillTextProps> = ({ position, text, fontSize = 0.15, 
       anchorY="middle"
       outlineWidth={0.01}
       outlineColor="#000000"
-      scale={hover ? 1.2 : 1}
-      onPointerOver={() => setHover(true)}
-      onPointerOut={() => setHover(false)}
+      scale={hovered ? 1.2 : 1}
+      onPointerOver={() => setHovered(true)}
+      onPointerOut={() => setHovered(false)}
     >
       {text}
     </Text>
   );
 };
 
-const createFootballGeometry = () => {
+const Football = ({ skills }: { skills: any[] }) => {
   const radius = 2;
   
-  const geometry = new THREE.IcosahedronGeometry(radius, 1);
+  // Create football geometry
+  const geometry = useMemo(() => {
+    const geo = new THREE.IcosahedronGeometry(radius, 1);
+    const positionAttribute = geo.attributes.position;
+    const vertices = [];
+    
+    for (let i = 0; i < positionAttribute.count; i++) {
+      vertices.push(new THREE.Vector3(
+        positionAttribute.getX(i),
+        positionAttribute.getY(i),
+        positionAttribute.getZ(i)
+      ));
+    }
+    
+    vertices.forEach(vertex => {
+      vertex.normalize().multiplyScalar(radius);
+    });
+    
+    for (let i = 0; i < positionAttribute.count; i++) {
+      positionAttribute.setXYZ(
+        i,
+        vertices[i].x,
+        vertices[i].y,
+        vertices[i].z
+      );
+    }
+    
+    return geo;
+  }, []);
   
-  const positionAttribute = geometry.attributes.position;
-  const vertices = [];
-  
-  for (let i = 0; i < positionAttribute.count; i++) {
-    vertices.push(new THREE.Vector3(
-      positionAttribute.getX(i),
-      positionAttribute.getY(i),
-      positionAttribute.getZ(i)
-    ));
-  }
-  
-  vertices.forEach(vertex => {
-    vertex.normalize().multiplyScalar(radius);
-  });
-  
-  for (let i = 0; i < positionAttribute.count; i++) {
-    positionAttribute.setXYZ(
-      i,
-      vertices[i].x,
-      vertices[i].y,
-      vertices[i].z
-    );
-  }
-  
-  return geometry;
-};
-
-const Football = ({ skills }: { skills: any[] }) => {
-  const footballRef = useRef<THREE.Mesh>(null);
-  const edgesRef = useRef<THREE.LineSegments>(null);
-  
-  const geometry = useMemo(() => createFootballGeometry(), []);
-  
+  // Create edges geometry for the lines
   const edgesGeometry = useMemo(() => new THREE.EdgesGeometry(geometry), [geometry]);
   
+  // Calculate skill positions on the football
   const skillPositions = useMemo(() => {
-    const positions: { position: [number, number, number]; faceType: FaceType }[] = [];
+    const positions = [];
     const vertices = [];
     const posArray = geometry.attributes.position.array;
     
@@ -127,9 +122,9 @@ const Football = ({ skills }: { skills: any[] }) => {
       <ambientLight intensity={0.5} />
       <pointLight position={[10, 10, 10]} intensity={1} />
       
-      <mesh ref={footballRef} geometry={geometry}>
+      <mesh geometry={geometry}>
         <meshStandardMaterial
-          color="#ffffff"
+          color="white"
           metalness={0.2}
           roughness={0.8}
           transparent
@@ -137,7 +132,7 @@ const Football = ({ skills }: { skills: any[] }) => {
         />
       </mesh>
       
-      <lineSegments ref={edgesRef} geometry={edgesGeometry}>
+      <lineSegments geometry={edgesGeometry}>
         <lineBasicMaterial 
           color="#cccccc"
           transparent
@@ -166,7 +161,7 @@ const FootballSkills = ({ skills }: { skills: any[] }) => {
         <OrbitControls 
           enableZoom={false}
           enablePan={false}
-          autoRotate={true}
+          autoRotate
           autoRotateSpeed={0.5}
           minPolarAngle={Math.PI / 4}
           maxPolarAngle={Math.PI / 1.5}
