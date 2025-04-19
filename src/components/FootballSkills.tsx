@@ -1,12 +1,13 @@
-import React, { useRef, useState, useMemo } from 'react';
-import { Canvas, useThree } from '@react-three/fiber';
+
+import React, { useRef, useState, useMemo, useEffect } from 'react';
+import { Canvas } from '@react-three/fiber';
 import { Text, OrbitControls } from '@react-three/drei';
 import * as THREE from 'three';
 
 interface SkillTextProps {
   position: [number, number, number];
   text: string;
-  icon: React.ReactNode;
+  icon?: React.ReactNode;
   category: string;
   fontSize?: number;
   color?: string;
@@ -17,11 +18,8 @@ type FaceType = 'pentagon' | 'hexagon';
 const SkillText: React.FC<SkillTextProps> = ({ position, text, fontSize = 0.15, color = 'white' }) => {
   const [hover, setHover] = useState(false);
   
-  const textRef = useRef<any>(null);
-  
   return (
     <Text
-      ref={textRef}
       position={position}
       fontSize={fontSize}
       color={color}
@@ -135,19 +133,16 @@ const Football = ({ skills }: { skills: any[] }) => {
           color="#ffffff"
           metalness={0.2}
           roughness={0.8}
-          transparent
+          transparent={true}
           opacity={0.7}
-          polygonOffset
-          polygonOffsetFactor={1}
         />
       </mesh>
       
       <lineSegments ref={edgesRef} geometry={edgesGeometry}>
         <lineBasicMaterial 
           color="#cccccc"
+          transparent={true}
           opacity={0.8}
-          transparent
-          linewidth={1}
         />
       </lineSegments>
       
@@ -156,7 +151,6 @@ const Football = ({ skills }: { skills: any[] }) => {
           key={i}
           position={skillPositions[i].position}
           text={skill.name}
-          icon={skill.icon}
           category={skill.category}
           color={skillPositions[i].faceType === 'pentagon' ? '#F97316' : '#ffffff'}
           fontSize={0.15}
@@ -173,7 +167,8 @@ const FootballSkills = ({ skills }: { skills: any[] }) => {
         <OrbitControls 
           enableZoom={false}
           enablePan={false}
-          autoRotate={false}
+          autoRotate={true}
+          autoRotateSpeed={0.5}
           minPolarAngle={Math.PI / 4}
           maxPolarAngle={Math.PI / 1.5}
         />
