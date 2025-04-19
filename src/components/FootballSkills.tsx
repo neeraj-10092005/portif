@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React from 'react';
 import { Canvas } from '@react-three/fiber';
 import { Text, OrbitControls } from '@react-three/drei';
 import * as THREE from 'three';
@@ -13,7 +13,7 @@ interface SkillTextProps {
 }
 
 const SkillText = ({ position, text, fontSize = 0.15, color = 'white' }: SkillTextProps) => {
-  const [hovered, setHovered] = useState(false);
+  const [hovered, setHovered] = React.useState(false);
   
   return (
     <Text
@@ -34,12 +34,12 @@ const SkillText = ({ position, text, fontSize = 0.15, color = 'white' }: SkillTe
 };
 
 const SimpleBall = ({ skills }: { skills: any[] }) => {
-  // Create a simpler ball with predefined positions
   const radius = 2;
+  
+  // Generate positions on a sphere for the skills
   const positions = React.useMemo(() => {
     const positions = [];
     
-    // Generate positions on a sphere
     for (let i = 0; i < Math.min(skills.length, 32); i++) {
       const phi = Math.acos(-1 + (2 * i) / Math.min(skills.length, 32));
       const theta = Math.sqrt(Math.min(skills.length, 32) * Math.PI) * phi;
@@ -64,10 +64,10 @@ const SimpleBall = ({ skills }: { skills: any[] }) => {
       <ambientLight intensity={1} />
       <pointLight position={[10, 10, 10]} />
       
-      {/* Simplified ball */}
+      {/* Ball geometry */}
       <mesh>
-        <icosahedronGeometry args={[radius, 1]} />
-        <meshBasicMaterial color="#ffffff" wireframe />
+        <sphereGeometry args={[radius, 32, 32]} />
+        <meshStandardMaterial color="#ffffff" wireframe />
       </mesh>
       
       {/* Skill labels */}
