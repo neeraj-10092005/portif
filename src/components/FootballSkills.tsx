@@ -63,10 +63,10 @@ const SimpleBall = ({ skills }: { skills: any[] }) => {
       <ambientLight intensity={0.5} />
       <pointLight position={[10, 10, 10]} intensity={1} />
       
-      {/* Ball geometry */}
+      {/* Ball geometry - using a basic sphere */}
       <mesh>
-        <sphereGeometry args={[radius, 32, 32]} />
-        <meshStandardMaterial color="#ffffff" wireframe={true} />
+        <sphereGeometry args={[radius, 16, 16]} />
+        <meshBasicMaterial color="#ffffff" wireframe />
       </mesh>
       
       {/* Skill labels */}
@@ -90,7 +90,7 @@ const FootballSkills = ({ skills = [] }: { skills: any[] }) => {
         <OrbitControls 
           enableZoom={false}
           enablePan={false}
-          autoRotate={true}
+          autoRotate
           autoRotateSpeed={0.5}
           minPolarAngle={Math.PI / 4}
           maxPolarAngle={Math.PI / 1.5}

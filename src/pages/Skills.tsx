@@ -11,12 +11,13 @@ import { TbChartBar } from 'react-icons/tb';
 import { Loader } from '@react-three/drei';
 import '../styles/honeycomb.css';
 
-// Import our FootballSkills component
+// Import our FootballSkills component with error boundary
 const FootballSkills = React.lazy(() => import('../components/FootballSkills'));
 
 const Skills = () => {
   const [activeCategory, setActiveCategory] = useState('all');
   const [viewMode, setViewMode] = useState<'honeycomb' | '3d'>('honeycomb');
+  const [hasError, setHasError] = useState(false);
 
   const categories = {
     all: 'All Skills',
@@ -70,6 +71,25 @@ const Skills = () => {
     ? skills 
     : skills.filter(skill => skill.category === activeCategory);
 
+  // Error boundary for 3D component
+  const ErrorFallback = () => {
+    React.useEffect(() => {
+      setHasError(true);
+    }, []);
+    
+    return (
+      <div className="flex flex-col justify-center items-center h-[500px] bg-muted/20 rounded-xl p-6 text-center">
+        <p className="text-red-500 mb-4">Failed to load 3D visualization</p>
+        <button 
+          className="px-4 py-2 bg-primary text-white rounded-full text-sm"
+          onClick={() => setViewMode('honeycomb')}
+        >
+          Switch to Honeycomb View
+        </button>
+      </div>
+    );
+  };
+
   return (
     <div>
       <section className="py-8 sm:py-12 md:py-16 lg:py-20 px-4 sm:px-6 bg-muted/10">
@@ -89,7 +109,10 @@ const Skills = () => {
               Honeycomb View
             </button>
             <button
-              onClick={() => setViewMode('3d')}
+              onClick={() => {
+                setViewMode('3d');
+                setHasError(false);
+              }}
               className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 ${
                 viewMode === '3d'
                   ? 'bg-primary text-white shadow-lg shadow-primary/20'
@@ -117,7 +140,7 @@ const Skills = () => {
             ))}
           </div>
 
-          {viewMode === 'honeycomb' ? (
+          {viewMode === 'honeycomb' || hasError ? (
             /* Honeycomb Grid */
             <div className="honeycomb-container">
               <div className="honeycomb-grid">
@@ -141,9 +164,11 @@ const Skills = () => {
           ) : (
             /* 3D Football View */
             <div className="w-full">
-              <Suspense fallback={<div className="flex justify-center items-center h-[500px]"><p>Loading 3D Football...</p></div>}>
-                <FootballSkills skills={filteredSkills} />
-              </Suspense>
+              <React.Suspense fallback={<div className="flex justify-center items-center h-[500px]"><p>Loading 3D Football...</p></div>}>
+                <React.ErrorBoundary FallbackComponent={ErrorFallback}>
+                  <FootballSkills skills={filteredSkills} />
+                </React.ErrorBoundary>
+              </React.Suspense>
               <Loader />
             </div>
           )}
