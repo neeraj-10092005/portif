@@ -1,5 +1,5 @@
 
-import React, { useRef, useState, useMemo, useEffect } from 'react';
+import React, { useRef, useState, useMemo } from 'react';
 import { Canvas } from '@react-three/fiber';
 import { Text, OrbitControls } from '@react-three/drei';
 import * as THREE from 'three';
@@ -7,7 +7,6 @@ import * as THREE from 'three';
 interface SkillTextProps {
   position: [number, number, number];
   text: string;
-  icon?: React.ReactNode;
   category: string;
   fontSize?: number;
   color?: string;
@@ -133,7 +132,7 @@ const Football = ({ skills }: { skills: any[] }) => {
           color="#ffffff"
           metalness={0.2}
           roughness={0.8}
-          transparent={true}
+          transparent
           opacity={0.7}
         />
       </mesh>
@@ -141,7 +140,7 @@ const Football = ({ skills }: { skills: any[] }) => {
       <lineSegments ref={edgesRef} geometry={edgesGeometry}>
         <lineBasicMaterial 
           color="#cccccc"
-          transparent={true}
+          transparent
           opacity={0.8}
         />
       </lineSegments>
