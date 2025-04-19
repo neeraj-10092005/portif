@@ -2,7 +2,6 @@
 import React from 'react';
 import { Canvas } from '@react-three/fiber';
 import { Text, OrbitControls } from '@react-three/drei';
-import * as THREE from 'three';
 
 interface SkillTextProps {
   position: [number, number, number];
@@ -61,13 +60,13 @@ const SimpleBall = ({ skills }: { skills: any[] }) => {
   
   return (
     <>
-      <ambientLight intensity={1} />
-      <pointLight position={[10, 10, 10]} />
+      <ambientLight intensity={0.5} />
+      <pointLight position={[10, 10, 10]} intensity={1} />
       
       {/* Ball geometry */}
       <mesh>
         <sphereGeometry args={[radius, 32, 32]} />
-        <meshStandardMaterial color="#ffffff" wireframe />
+        <meshStandardMaterial color="#ffffff" wireframe={true} />
       </mesh>
       
       {/* Skill labels */}
@@ -84,19 +83,19 @@ const SimpleBall = ({ skills }: { skills: any[] }) => {
   );
 };
 
-const FootballSkills = ({ skills }: { skills: any[] }) => {
+const FootballSkills = ({ skills = [] }: { skills: any[] }) => {
   return (
     <div className="w-full h-[500px] rounded-xl overflow-hidden">
       <Canvas camera={{ position: [0, 0, 5], fov: 50 }}>
         <OrbitControls 
           enableZoom={false}
           enablePan={false}
-          autoRotate
+          autoRotate={true}
           autoRotateSpeed={0.5}
           minPolarAngle={Math.PI / 4}
           maxPolarAngle={Math.PI / 1.5}
         />
-        <SimpleBall skills={skills} />
+        <SimpleBall skills={skills || []} />
       </Canvas>
     </div>
   );

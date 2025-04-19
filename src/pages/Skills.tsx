@@ -11,7 +11,7 @@ import { TbChartBar } from 'react-icons/tb';
 import { Loader } from '@react-three/drei';
 import '../styles/honeycomb.css';
 
-// Import our new FootballSkills component
+// Import our FootballSkills component
 const FootballSkills = React.lazy(() => import('../components/FootballSkills'));
 
 const Skills = () => {
@@ -141,7 +141,7 @@ const Skills = () => {
           ) : (
             /* 3D Football View */
             <div className="w-full">
-              <Suspense fallback={<div className="flex justify-center items-center h-[600px]"><p>Loading 3D Football...</p></div>}>
+              <Suspense fallback={<div className="flex justify-center items-center h-[500px]"><p>Loading 3D Football...</p></div>}>
                 <FootballSkills skills={filteredSkills} />
               </Suspense>
               <Loader />
