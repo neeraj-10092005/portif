@@ -1,4 +1,3 @@
-
 // src/pages/Index.tsx
 import React, { useState, useCallback, useEffect, useRef, lazy, Suspense } from "react";
 import { Link } from "react-router-dom";
@@ -239,11 +238,13 @@ const Index = () => {
                 </span>
               </Link>
 
-              {/* Removed Resume Button, replaced with duplicate Contact Me Button */}
-              <Link
-                to="/contact"
+              {/* Resume Button */}
+              <a
+                href="/Venkat_Neeraj_Reddy_Resume.pdf" // Update to your actual resume path
+                download
                 className="group relative w-[185px] h-[55px]
                            flex items-center justify-center gap-2 mx-auto"
+                aria-label="Download Resume"
               >
                 <div className="absolute inset-0 box-border w-[185px] h-[55px] rounded-[72px]
                                 blur-[15px]
@@ -263,9 +264,9 @@ const Index = () => {
                                 bg-black
                                 overflow-hidden z-0" />
                 <span className="relative z-[3] flex items-center gap-2 text-white">
-                  Contact Me <ArrowRight size={20} className="transform -rotate-45" />
+                  Resume <Download size={20} className="transition-all duration-200 group-hover:scale-110" />
                 </span>
-              </Link>
+              </a>
             </div>
             <div className="flex justify-center flex-wrap mt-6">
               {Array.from("Data is my playground, and I'm here to turn chaos into clarity.").map((letter, index) => (
@@ -341,4 +342,3 @@ const Index = () => {
 };
 
 export default Index;
-
