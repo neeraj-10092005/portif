@@ -209,7 +209,7 @@ const Index = () => {
             <p className="text-foreground/60 text-lg md:text-xl text-white">
               <span ref={el}></span>
             </p>
-            <div className="relative flex items-center justify-center gap-4 mt-4">
+            <div className="relative flex items-center justify-center gap-3 mt-4">
               <Link
                 to="/contact"
                 className="group relative w-[185px] h-[55px]
@@ -239,33 +239,51 @@ const Index = () => {
               <a
                 href="/Resume.pdf"
                 download
-                className="group relative w-[185px] h-[55px] flex items-center justify-center gap-2 mx-auto"
                 aria-label="Download Resume"
+                className="
+                  group relative mx-auto
+                  flex items-center justify-center
+                  w-[120px] h-[45px]  md:w-[130px] md:h-[48px]
+                  rounded-[72px] overflow-hidden
+                  bg-black
+                  border-[2px] border-[#222222]
+                  shadow-[0px_1px_2px_0px_rgba(0,0,0,0.25)]
+                  transition-all duration-300
+                  hover:border-primary
+                  focus:outline-none focus-visible:ring-2 focus-visible:ring-primary
+                "
+                style={{ marginLeft: '-12px' }}
               >
-                <div className="absolute inset-0 box-border w-[185px] h-[55px] rounded-[72px]
-                                blur-[15px]
-                                shadow-[0px_1px_2px_0px_rgba(0,0,0,0.25)]
-                                bg-[radial-gradient(25%_50%_at_50%_100%,#ffffff_0%,rgba(255,255,255,0)_100%)]
-                                overflow-hidden z-0
-                                border-[2px] border-[#222222]
-                                transition-all duration-300" />
-                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2
-                                w-[167px] h-[55px] rounded-[72px]
-                                bg-[radial-gradient(20.7%_50%_at_50%_100%,#ffffff_0%,rgba(255,255,255,0)_100%)]
-                                overflow-hidden z-0
-                                transition-all duration-300
-                                group-hover:bg-[radial-gradient(60.1%_50%_at_50%_100%,#b3a3fa_0%,rgba(255,255,255,0)_100%)]" />
-                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2
-                                w-[166px] h-[55px] rounded-[114px]
-                                bg-black
-                                overflow-hidden z-0" />
-                <span className="relative z-[3] flex items-center gap-2 text-white transition-colors duration-300">
-                  Resume
-                  <Download
-                    size={20}
-                    className="ml-2 transition-transform transition-colors duration-300
-                               group-hover:text-primary group-hover:translate-y-[-3px] group-hover:scale-110"
-                  />
+                <div className="absolute inset-0 z-0 blur-[12px] opacity-40 bg-[radial-gradient(70%_40%_at_50%_120%,#b3a3fa_0%,rgba(255,255,255,0)_100%)] transition-all duration-300 group-hover:opacity-100" />
+                <span className="relative z-10 flex items-center justify-center w-full h-full overflow-hidden">
+                  <span
+                    className="
+                    absolute left-0 right-0 top-1/2 -translate-y-1/2 text-white font-medium
+                    text-base md:text-lg px-3 transition-all duration-300
+                    group-hover:opacity-0 group-hover:translate-y-3 opacity-100
+                  "
+                    style={{
+                      pointerEvents: 'none',
+                    }}
+                  >
+                    Resume
+                  </span>
+                  <span
+                    className="
+                    absolute left-0 right-0 top-1/2 flex justify-center
+                    -translate-y-1/2 opacity-0 scale-90
+                    group-hover:opacity-100 group-hover:scale-100 group-hover:translate-y-0
+                    transition-all duration-300
+                  "
+                    style={{
+                      pointerEvents: 'none',
+                    }}
+                  >
+                    <Download
+                      size={26}
+                      className="text-primary bg-transparent transition-transform duration-300"
+                    />
+                  </span>
                 </span>
               </a>
             </div>
