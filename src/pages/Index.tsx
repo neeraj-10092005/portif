@@ -1,15 +1,14 @@
 // src/pages/Index.tsx
 import React, { useState, useCallback, useEffect, useRef, lazy, Suspense } from "react";
 import { Link } from "react-router-dom";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Download } from "lucide-react";
 import { loadFull } from "tsparticles";
 import type { Container, Engine } from "tsparticles-engine";
 import Particles from "react-tsparticles";
-import Typed from 'typed.js'; // Update the import
-import { motion } from "framer-motion"; // For scroll animations
-import { projects as allProjects } from "../data/projectsData"; // Import centralized projects data
+import Typed from 'typed.js';
+import { motion } from "framer-motion";
+import { projects as allProjects } from "../data/projectsData";
 
-// Lazy load the ProjectTicker component
 const ProjectTicker = lazy(() => import('../components/ProjectTicker'));
 
 const Index = () => {
@@ -29,7 +28,6 @@ const Index = () => {
     }
   }, []);
 
-  // Use only the first two projects from the centralized data
   const projects = allProjects.slice(0, 2);
 
   const skills = [
@@ -41,7 +39,6 @@ const Index = () => {
     "Web Development",
   ];
 
-  // Typing Animation setup
   const el = useRef(null);
   const typed = useRef(null);
 
@@ -55,10 +52,8 @@ const Index = () => {
       smartBackspace: true,
     };
 
-    // Initialize Typed
     typed.current = new Typed(el.current, options);
 
-    // Cleanup on unmount
     return () => {
       if (typed.current) {
         typed.current.destroy();
@@ -68,7 +63,6 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background text-foreground relative overflow-hidden">
-      {/* Light Source Effect */}
       <div className="absolute inset-0 z-0">
         <div
           className="absolute top-[-100%] left-[-50%] w-[150%] h-[400%] opacity-30"
@@ -78,7 +72,6 @@ const Index = () => {
           }}
         />
       </div>
-      {/* Dimming Rays */}
       <div className="absolute inset-0 z-0">
         <div
           className="absolute inset-0 opacity-40"
@@ -88,11 +81,8 @@ const Index = () => {
           }}
         />
       </div>
-      {/* Content Container */}
       <div className="relative z-10">
-        {/* Hero Section */}
         <section className="min-h-screen flex items-center justify-center py-32 px-6 relative">
-          {/* Gradient Overlay */}
           <div
             className="absolute inset-0 z-10"
             style={{
@@ -100,7 +90,6 @@ const Index = () => {
                 "linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.6) 100%)",
             }}
           />
-          {/* Particles Background */}
           <Particles
             id="tsparticles-hero"
             init={particlesInit}
@@ -129,7 +118,6 @@ const Index = () => {
             }}
             className="absolute inset-0 z-0"
           />
-          {/* Video Background */}
           <div className="absolute top-0 left-0 w-full h-[35vh] md:h-[36vh] overflow-hidden z-0">
             <video
               autoPlay
@@ -150,7 +138,6 @@ const Index = () => {
               )}
             </video>
           </div>
-          {/* Content */}
           <div className="text-center max-w-3xl mx-auto space-y-6 animate-fade-in relative z-20 mt-20">
             <div className="flex-shrink-0 flex justify-center items-center">
               <div className="relative w-[176px] h-[176px] mx-auto">
@@ -163,7 +150,6 @@ const Index = () => {
                 />
               </div>
             </div>
-            {/* Split name into individual letters for animation */}
             <motion.div 
               className="text-4xl md:text-6xl font-display font-bold text-white flex flex-col items-center"
             >
@@ -220,52 +206,69 @@ const Index = () => {
                 ))}
               </div>
             </motion.div>
-            {/* Typing Animation */}
             <p className="text-foreground/60 text-lg md:text-xl text-white">
               <span ref={el}></span>
             </p>
-
-            {/* Contact Button with Glow Effect */}
-            <div className="relative">
+            <div className="relative flex items-center justify-center gap-4 mt-4">
               <Link
                 to="/contact"
                 className="group relative w-[185px] h-[55px]
-                         flex items-center justify-center gap-2 mx-auto"
+                           flex items-center justify-center gap-2 mx-auto"
               >
-                {/* Glow layer (outermost) */}
                 <div className="absolute inset-0 box-border w-[185px] h-[55px] rounded-[72px]
-                              blur-[15px]
-                              shadow-[0px_1px_2px_0px_rgba(0,0,0,0.25)]
-                              bg-[radial-gradient(25%_50%_at_50%_100%,#ffffff_0%,rgba(255,255,255,0)_100%)]
-                              overflow-hidden z-0
-                              border-[2px] border-[#222222]
-                              transition-all duration-300">
-                </div>
-
-                {/* Stroke layer (middle) */}
+                                blur-[15px]
+                                shadow-[0px_1px_2px_0px_rgba(0,0,0,0.25)]
+                                bg-[radial-gradient(25%_50%_at_50%_100%,#ffffff_0%,rgba(255,255,255,0)_100%)]
+                                overflow-hidden z-0
+                                border-[2px] border-[#222222]
+                                transition-all duration-300" />
                 <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2
-                              w-[167px] h-[55px] rounded-[72px]
-                              bg-[radial-gradient(20.7%_50%_at_50%_100%,#ffffff_0%,rgba(255,255,255,0)_100%)]
-                              overflow-hidden z-0
-                              transition-all duration-300
-                              group-hover:bg-[radial-gradient(60.1%_50%_at_50%_100%,#ffffff_0%,rgba(255,255,255,0)_100%)]">
-                </div>
-
-                {/* Fill layer (innermost) */}
+                                w-[167px] h-[55px] rounded-[72px]
+                                bg-[radial-gradient(20.7%_50%_at_50%_100%,#ffffff_0%,rgba(255,255,255,0)_100%)]
+                                overflow-hidden z-0
+                                transition-all duration-300
+                                group-hover:bg-[radial-gradient(60.1%_50%_at_50%_100%,#ffffff_0%,rgba(255,255,255,0)_100%)]" />
                 <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2
-                              w-[166px] h-[55px] rounded-[114px]
-                              bg-black
-                              overflow-hidden z-0">
-                </div>
-
-                {/* Content */}
+                                w-[166px] h-[55px] rounded-[114px]
+                                bg-black
+                                overflow-hidden z-0" />
                 <span className="relative z-[3] flex items-center gap-2 text-white">
                   Contact Me <ArrowRight size={20} className="transform -rotate-45" />
                 </span>
               </Link>
+              <a
+                href="/Resume.pdf"
+                download
+                className="group relative w-[185px] h-[55px] flex items-center justify-center gap-2 mx-auto"
+                aria-label="Download Resume"
+              >
+                <div className="absolute inset-0 box-border w-[185px] h-[55px] rounded-[72px]
+                                blur-[15px]
+                                shadow-[0px_1px_2px_0px_rgba(0,0,0,0.25)]
+                                bg-[radial-gradient(25%_50%_at_50%_100%,#ffffff_0%,rgba(255,255,255,0)_100%)]
+                                overflow-hidden z-0
+                                border-[2px] border-[#222222]
+                                transition-all duration-300" />
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2
+                                w-[167px] h-[55px] rounded-[72px]
+                                bg-[radial-gradient(20.7%_50%_at_50%_100%,#ffffff_0%,rgba(255,255,255,0)_100%)]
+                                overflow-hidden z-0
+                                transition-all duration-300
+                                group-hover:bg-[radial-gradient(60.1%_50%_at_50%_100%,#b3a3fa_0%,rgba(255,255,255,0)_100%)]" />
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2
+                                w-[166px] h-[55px] rounded-[114px]
+                                bg-black
+                                overflow-hidden z-0" />
+                <span className="relative z-[3] flex items-center gap-2 text-white transition-colors duration-300">
+                  Resume
+                  <Download
+                    size={20}
+                    className="ml-2 transition-transform transition-colors duration-300
+                               group-hover:text-primary group-hover:translate-y-[-3px] group-hover:scale-110"
+                  />
+                </span>
+              </a>
             </div>
-
-            {/* Tagline below button */}
             <div className="flex justify-center flex-wrap mt-6">
               {Array.from("Data is my playground, and I'm here to turn chaos into clarity.").map((letter, index) => (
                 <motion.span
@@ -295,7 +298,6 @@ const Index = () => {
             </div>
           </div>
         </section>
-        {/* Projects Section */}
         <motion.section
           id="projects"
           className="py-20"
@@ -330,7 +332,6 @@ const Index = () => {
             </div>
           </div>
         </motion.section>
-        {/* Footer */}
         <footer className="py-8 px-6 border-t border-accent/10">
           <div className="max-w-4xl mx-auto text-center text-foreground/60">
             <p>© 2025 All Rights Reserved</p>
