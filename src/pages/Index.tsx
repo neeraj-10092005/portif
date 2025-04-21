@@ -1,3 +1,4 @@
+
 // src/pages/Index.tsx
 import React, { useState, useCallback, useEffect, useRef, lazy, Suspense } from "react";
 import { Link } from "react-router-dom";
@@ -210,6 +211,7 @@ const Index = () => {
               <span ref={el}></span>
             </p>
             <div className="relative flex items-center justify-center gap-3 mt-4">
+              {/* Contact Me Button */}
               <Link
                 to="/contact"
                 className="group relative w-[185px] h-[55px]
@@ -236,56 +238,34 @@ const Index = () => {
                   Contact Me <ArrowRight size={20} className="transform -rotate-45" />
                 </span>
               </Link>
-              <a
-                href="/Resume.pdf"
-                download
-                aria-label="Download Resume"
-                className="
-                  group relative mx-auto
-                  flex items-center justify-center
-                  w-[120px] h-[45px]  md:w-[130px] md:h-[48px]
-                  rounded-[72px] overflow-hidden
-                  bg-black
-                  border-[2px] border-[#222222]
-                  shadow-[0px_1px_2px_0px_rgba(0,0,0,0.25)]
-                  transition-all duration-300
-                  hover:border-primary
-                  focus:outline-none focus-visible:ring-2 focus-visible:ring-primary
-                "
-                style={{ marginLeft: '-12px' }}
+
+              {/* Removed Resume Button, replaced with duplicate Contact Me Button */}
+              <Link
+                to="/contact"
+                className="group relative w-[185px] h-[55px]
+                           flex items-center justify-center gap-2 mx-auto"
               >
-                <div className="absolute inset-0 z-0 blur-[12px] opacity-40 bg-[radial-gradient(70%_40%_at_50%_120%,#b3a3fa_0%,rgba(255,255,255,0)_100%)] transition-all duration-300 group-hover:opacity-100" />
-                <span className="relative z-10 flex items-center justify-center w-full h-full overflow-hidden">
-                  <span
-                    className="
-                    absolute left-0 right-0 top-1/2 -translate-y-1/2 text-white font-medium
-                    text-base md:text-lg px-3 transition-all duration-300
-                    group-hover:opacity-0 group-hover:translate-y-3 opacity-100
-                  "
-                    style={{
-                      pointerEvents: 'none',
-                    }}
-                  >
-                    Resume
-                  </span>
-                  <span
-                    className="
-                    absolute left-0 right-0 top-1/2 flex justify-center
-                    -translate-y-1/2 opacity-0 scale-90
-                    group-hover:opacity-100 group-hover:scale-100 group-hover:translate-y-0
-                    transition-all duration-300
-                  "
-                    style={{
-                      pointerEvents: 'none',
-                    }}
-                  >
-                    <Download
-                      size={26}
-                      className="text-primary bg-transparent transition-transform duration-300"
-                    />
-                  </span>
+                <div className="absolute inset-0 box-border w-[185px] h-[55px] rounded-[72px]
+                                blur-[15px]
+                                shadow-[0px_1px_2px_0px_rgba(0,0,0,0.25)]
+                                bg-[radial-gradient(25%_50%_at_50%_100%,#ffffff_0%,rgba(255,255,255,0)_100%)]
+                                overflow-hidden z-0
+                                border-[2px] border-[#222222]
+                                transition-all duration-300" />
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2
+                                w-[167px] h-[55px] rounded-[72px]
+                                bg-[radial-gradient(20.7%_50%_at_50%_100%,#ffffff_0%,rgba(255,255,255,0)_100%)]
+                                overflow-hidden z-0
+                                transition-all duration-300
+                                group-hover:bg-[radial-gradient(60.1%_50%_at_50%_100%,#ffffff_0%,rgba(255,255,255,0)_100%)]" />
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2
+                                w-[166px] h-[55px] rounded-[114px]
+                                bg-black
+                                overflow-hidden z-0" />
+                <span className="relative z-[3] flex items-center gap-2 text-white">
+                  Contact Me <ArrowRight size={20} className="transform -rotate-45" />
                 </span>
-              </a>
+              </Link>
             </div>
             <div className="flex justify-center flex-wrap mt-6">
               {Array.from("Data is my playground, and I'm here to turn chaos into clarity.").map((letter, index) => (
@@ -361,3 +341,4 @@ const Index = () => {
 };
 
 export default Index;
+
